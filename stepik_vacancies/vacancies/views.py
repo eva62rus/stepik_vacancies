@@ -13,6 +13,9 @@ class AllVacanciesView(View):
     def get(self, request):
         return render(request, 'vacancies.html')
 
+
 class VacanciesBySpecializationView(View):
     def get(self, request, specialization):
         return render(request, 'vacancies.html')
+
+
