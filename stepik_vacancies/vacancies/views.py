@@ -42,20 +42,23 @@ class VacanciesByCatView(View):
     def get(self, request, category):
         try:
             spec = Speciality.objects.get(code=category)
+            vacancies = Vacancy.objects.filter(speciality=spec.id) # type:ignore
+            return render(request, 'vacancies.html',
+                           {'vacancies_data': vacancies, 'title': Msg.SPEC_VACANCIES.value + spec.title})
         except ObjectDoesNotExist:
             print(Msg.SPEC_NOT_EXIST.value)
-        vacancies = Vacancy.objects.filter(speciality=spec.id) # type:ignore
-        return render(request, 'vacancies.html', {'vacancies_data': vacancies, 'title': Msg.SPEC_VACANCIES.value + spec.title}) # type: ignore
+ 
 
 
 class CompanyView(View):
     def get(self, request, company_id):
         try:
             comp = Company.objects.get(id=company_id)
+            vacancies = Vacancy.objects.filter(company=comp.id) # type:ignore
+            return render(request, 'company.html', {'company_data': comp, 'vacancies_data': vacancies})
         except ObjectDoesNotExist:
             print(Msg.COMP_NOT_EXIST.value)
-        vacancies = Vacancy.objects.filter(company=comp.id) # type:ignore
-        return render(request, 'company.html', {'company_data': comp, 'vacancies_data': vacancies})
+         
 
 
 class VacancyView(View):
@@ -63,6 +66,7 @@ class VacancyView(View):
         try:
             vac = Vacancy.objects.get(id=vacancy_id)
             comp = vac.company
+            return render(request, 'vacancy.html', {'vacancy_data': vac, 'company_data': comp})
         except ObjectDoesNotExist:
             print(Msg.VAC_NOT_EXIST.value)
-        return render(request, 'vacancy.html', {'vacancy_data': vac, 'company_data': comp})
+        
