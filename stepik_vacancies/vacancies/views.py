@@ -1,6 +1,17 @@
 from django.shortcuts import render
 from django.views import View
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from vacancies.models import Company, Speciality, Vacancy
+from enum import Enum
+
+
+class Msg(Enum):
+    SPEC_NOT_EXIST = 'В запросе передается несуществующая спициализация!'
+    COMP_NOT_EXIST = 'В запросе передается несуществующая компания!'
+    VAC_NOT_EXIST = 'В запросе передается несуществующая вакансия!'
+    ALL_VACANCIES = "Все вакансии"
+    SPEC_VACANCIES = "Вакансии по специализации "
+
 
 class MainPageView(View):
     def get(self, request):
@@ -24,19 +35,34 @@ class MainPageView(View):
 class AllVacanciesView(View):
     def get(self, request):
         vacancies = Vacancy.objects.all()
-        return render(request, 'vacancies.html', {'vacancies_data': vacancies, 'title': 'Все вакансии'})
+        return render(request, 'vacancies.html', {'vacancies_data': vacancies, 'title': Msg.ALL_VACANCIES.value})
 
 
 class VacanciesByCatView(View):
     def get(self, request, category):
-        return render(request, 'vacancies.html')
+        try:
+            spec = Speciality.objects.get(code=category)
+        except ObjectDoesNotExist:
+            print(Msg.SPEC_NOT_EXIST.value)
+        vacancies = Vacancy.objects.filter(speciality=spec.id) # type:ignore
+        return render(request, 'vacancies.html', {'vacancies_data': vacancies, 'title': Msg.SPEC_VACANCIES.value + spec.title}) # type: ignore
 
 
 class CompanyView(View):
     def get(self, request, company_id):
-        return render(request, 'company.html')
+        try:
+            comp = Company.objects.get(id=company_id)
+        except ObjectDoesNotExist:
+            print(Msg.COMP_NOT_EXIST.value)
+        vacancies = Vacancy.objects.filter(company=comp.id) # type:ignore
+        return render(request, 'company.html', {'company_data': comp, 'vacancies_data': vacancies})
 
 
 class VacancyView(View):
     def get(self, request, vacancy_id):
-        return render(request, 'vacancy.html')
+        try:
+            vac = Vacancy.objects.get(id=vacancy_id)
+            comp = vac.company
+        except ObjectDoesNotExist:
+            print(Msg.VAC_NOT_EXIST.value)
+        return render(request, 'vacancy.html', {'vacancy_data': vac, 'company_data': comp})
