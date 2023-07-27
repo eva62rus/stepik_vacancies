@@ -22,7 +22,6 @@
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">Django</a> 
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">Парсинг</a> 
             <a href="#" class="text-dark border-bottom border-dark m-1 text-decoration-none">ML</a> 
-
           </p>
         </div>
       </div>
@@ -37,8 +36,8 @@
             <div class="card pt-4 text-center mb-4">
               <img class="mx-auto d-block" src="https://place-hold.it/80x80" width="80" height="80" alt="">
               <div class="card-body">
-                <p class="card-text mb-2">{{s.spec.title}}</p>
-                <p class="card-text">{{s.cnt}}<a href</a></p>
+                <p class="card-text mb-2"><a href="/vacancies/cat/{{ s.spec.code }}">{{s.spec.title}}</a></p>
+                <p class="card-text">{{s.cnt}}</p>
               </div>
             </div>
           </div>
@@ -56,8 +55,8 @@
               <img class="mx-auto d-block mw-100" src="https://place-hold.it/80x80" alt="">
             </a>
             <div class="card-body">
-              <p class="card-text"><i><a href="#">{{c.comp.name}}</a></i></p>
-              <p class="card-text"><a href="#">{{c.cnt}}</a></p>
+              <p class="card-text"><i><a href="/companies/{{c.comp.id}}">{{c.comp.name}}</a></i></p>
+              <p class="card-text">{{c.cnt}}</p>
             </div>
           </div>
         </div>
